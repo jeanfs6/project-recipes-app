@@ -5,6 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 // Release Main Group 19 - 0 Requisitos
+// Requisitos 02 a 08
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
