@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
+import propTypes from 'prop-types';
+import * as localApi from '../helpers/localApi/index';
 import 'bootstrap/dist/css/bootstrap.css';
 
-const Login = () => {
+const Login = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorEmail, setErrorEmail] = useState(true);
   const [errorPassword, setErrorPassword] = useState(true);
 
   const validadorEmail = (value) => {
-    console.log('validadorEmail', value);
-
     const regex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
     const errorCases = [
@@ -21,7 +21,6 @@ const Login = () => {
   };
 
   const validadorSenha = (value) => {
-    console.log('validadorSenha', value);
     const minLength = 6;
 
     if (value.length <= minLength) return true;
@@ -30,6 +29,10 @@ const Login = () => {
 
   const handleSubmit = () => {
     console.log(email, password);
+    localApi.setLocalKey('mealsToken', '1');
+    localApi.setLocalKey('cocktailsToken', '1');
+    localApi.setLocalKey('user', { email });
+    history.push('/foods');
   };
 
   const handleChange = ({ target }) => {
@@ -71,7 +74,7 @@ const Login = () => {
             />
           </div>
           <button
-            type="submit"
+            type="button"
             className="btn btn-primary"
             data-testid="login-submit-btn"
             disabled={ errorEmail || errorPassword }
@@ -84,5 +87,9 @@ const Login = () => {
     </div>
   );
 };
+
+Login.propTypes = {
+  history: propTypes.objectOf(propTypes.any),
+}.isRequired;
 
 export default Login;
