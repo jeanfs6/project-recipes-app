@@ -1,0 +1,13 @@
+.l-search {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 0.5rem;
+}
+
+.l-search__input button {
+  margin-left: 0.5rem;
+}
+
+.l-search__radio {
+  padding: 0.5rem;
+}
