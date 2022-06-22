@@ -17,6 +17,7 @@ function ProvedorContextoDoStars({ children }) {
   const [drinks, setDrinks] = useState([]);
   const [foods, setFoods] = useState([]);
 
+  // TODO: Transformar o if e else em template literals
   const fetchSearch = async (searchText, searchType, foodType) => {
     const foodTypeLower = foodType.toLowerCase();
 
@@ -25,8 +26,9 @@ function ProvedorContextoDoStars({ children }) {
     );
 
     console.log('Resposta: ', response);
-    if (foodTypeLower === 'meal') setFoods(response);
+    if (foodTypeLower === 'meals') setFoods(response);
     else setDrinks(response);
+    return response;
   };
 
   useEffect(() => {
