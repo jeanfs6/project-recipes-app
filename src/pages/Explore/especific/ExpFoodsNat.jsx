@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Header from '../../../component/header';
 import SearchBar from '../../../component/searchBar';
+import Footer from '../../../component/Footer';
 
 const ExpFoodsNat = () => {
   const [search, setSearch] = useState(false);
@@ -14,6 +15,7 @@ const ExpFoodsNat = () => {
       <Header title="Explore Nationalities" search callback={ toggleSearchBar } />
       {search && (<SearchBar />)}
       ExploreFoodsNationalities
+      <Footer />
     </div>
   );
 };
