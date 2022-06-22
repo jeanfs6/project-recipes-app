@@ -16,6 +16,8 @@ const APIS = {
 function ProvedorContextoDoStars({ children }) {
   const [drinks, setDrinks] = useState([]);
   const [foods, setFoods] = useState([]);
+  const [mealsCat, setMealsCat] = useState([]);
+  const [drinksCat, setDrinksCat] = useState([]);
 
   // TODO: Transformar o if e else em template literals
   const fetchSearch = async (searchText, searchType, foodType) => {
@@ -45,15 +47,40 @@ function ProvedorContextoDoStars({ children }) {
     fetchApiDrinks();
   }, []);
 
+  useEffect(() => {
+    const MAX_CAT = 5;
+    const getCatMeals = async () => {
+      const dataApi = await fetch('https://www.themealdb.com/api/json/v1/1/list.php?c=list');
+      const allCatMeals = await dataApi.json();
+      const { meals } = allCatMeals;
+      const result = meals.slice(0, MAX_CAT);
+      setMealsCat(result);
+    };
+    getCatMeals();
+  }, []);
+  useEffect(() => {
+    const MAX_CAT = 5;
+    const getCatDrinks = async () => {
+      const dataApi = await fetch('https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list');
+      const allCatDrinks = await dataApi.json();
+      const { drinks: allDrinks } = allCatDrinks;
+      const result = allDrinks.slice(0, MAX_CAT);
+      setDrinksCat(result);
+    };
+    getCatDrinks();
+  }, []);
+
   const contexto = {
     recipes: {
       drinks,
       foods,
     },
-
     functions: {
       fetchSearch,
     },
+    mealsCat,
+    drinksCat,
+
   };
 
   return (

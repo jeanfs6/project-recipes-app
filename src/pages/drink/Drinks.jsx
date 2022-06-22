@@ -13,6 +13,7 @@ const Drinks = ({ history }) => {
   const {
     recipes: { drinks },
     functions: { fetchSearch },
+    drinksCat,
   } = useContext(MeuContextoInterno);
 
   const toggleSearchBar = () => {
@@ -39,6 +40,18 @@ const Drinks = ({ history }) => {
     <div className="l-drink">
       <Header title="Drinks" search callback={ toggleSearchBar } />
       {search && (<SearchBar callback={ fetchDrinks } />)}
+      <p>
+        { drinksCat && drinksCat.map(({ strCategory: cat }, index) => (
+          <button
+            key={ index }
+            data-testid={ `${cat}-category-filter` }
+            type="button"
+          >
+            {cat}
+          </button>
+        ))}
+
+      </p>
       {drinks
         ? drinks.slice(0, MAX_RECIPES).map((drink, index) => (
           <RecipeCard
