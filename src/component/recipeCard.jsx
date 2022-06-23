@@ -1,27 +1,36 @@
 import React from 'react';
 import propTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import YoutubeIcon from '../images/youtube.svg';
 import './recipeCard.css';
 
 const RecipeCard = ({ recipe, type, index }) => {
   const {
-    strYoutube,
+    strYoutube, idMeal, idDrink,
     strVideo, strMeal, strDrink, strDrinkThumb, strMealThumb } = recipe;
   const name = type === 'Meal' ? strMeal : strDrink;
   const image = type === 'Meal' ? strMealThumb : strDrinkThumb;
   const video = type === 'Meal' ? strYoutube : strVideo;
+
+  const redirect = () => ({
+    pathname: type === 'Meal' ? `/foods/${idMeal}` : `/drinks/${idDrink}`,
+    state: recipe,
+  });
 
   return (
     <div
       className="card bg-dark text-white shadow-sm"
       data-testid={ `${index}-recipe-card` }
     >
-      <img
-        className="card-img card-img-mine"
-        src={ image }
-        alt="Recipe"
-        data-testid={ `${index}-card-img` }
-      />
+      <Link to={ redirect() }>
+        <img
+          className="card-img card-img-mine"
+          src={ image }
+          alt="Recipe"
+          data-testid={ `${index}-card-img` }
+        />
+      </Link>
+
       <div
         className="
           card-img-overlay-mine d-flex
