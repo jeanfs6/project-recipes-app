@@ -3,6 +3,7 @@ import propTypes from 'prop-types';
 import { MeuContextoInterno } from '../../context/index';
 import Header from '../../component/header';
 import SearchBar from '../../component/searchBar';
+import Footer from '../../component/Footer';
 
 import RecipeCard from '../../component/recipeCard';
 
@@ -61,6 +62,7 @@ const Drinks = ({ history }) => {
             index={ index }
           />))
         : noResults()}
+      <Footer />
     </div>
   );
 };
