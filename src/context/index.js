@@ -8,9 +8,11 @@ const APIS = {
   MEALS__ingredient: 'https://www.themealdb.com/api/json/v1/1/filter.php?i=',
   MEALS__name: 'https://www.themealdb.com/api/json/v1/1/search.php?s=',
   MEALS__fl: 'https://www.themealdb.com/api/json/v1/1/search.php?f=',
+  MEALS__cat: 'https://www.themealdb.com/api/json/v1/1/filter.php?c=',
   DRINKS__ingredient: 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=',
   DRINKS__name: 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=',
   DRINKS__fl: 'https://www.thecocktaildb.com/api/json/v1/1/search.php?f=',
+  DRINKS__cat: 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=',
 };
 
 function ProvedorContextoDoStars({ children }) {
@@ -18,16 +20,23 @@ function ProvedorContextoDoStars({ children }) {
   const [foods, setFoods] = useState([]);
   const [mealsCat, setMealsCat] = useState([]);
   const [drinksCat, setDrinksCat] = useState([]);
+  const [reFetch, setReFetch] = useState(false);
 
   // TODO: Transformar o if e else em template literals
   const fetchSearch = async (searchText, searchType, foodType) => {
     const foodTypeLower = foodType.toLowerCase();
+    let response = [];
 
-    const response = await Api.fetchApis(
-      APIS[`${foodType}__${searchType}`] + searchText, foodTypeLower,
-    );
+    if (searchType === null) {
+      response = await Api.fetchApis(
+        APIS[`${foodType}__cat`] + searchText, foodTypeLower,
+      );
+    } else {
+      response = await Api.fetchApis(
+        APIS[`${foodType}__${searchType}`] + searchText, foodTypeLower,
+      );
+    }
 
-    console.log('Resposta: ', response);
     if (foodTypeLower === 'meals') setFoods(response);
     else setDrinks(response);
     return response;
@@ -45,7 +54,7 @@ function ProvedorContextoDoStars({ children }) {
       setDrinks(json);
     };
     fetchApiDrinks();
-  }, []);
+  }, [reFetch]);
 
   // TODO: Refatorar para o uso do helper
   useEffect(() => {
@@ -79,6 +88,10 @@ function ProvedorContextoDoStars({ children }) {
     },
     functions: {
       fetchSearch,
+    },
+    fetchDefault: {
+      reFetch,
+      setReFetch,
     },
     mealsCat,
     drinksCat,
