@@ -5,6 +5,7 @@ import { MeuContextoInterno } from '../context';
 
 const ToggleCatButtons = ({ foodType }) => {
   const [activeButton, setActiveButton] = useState('');
+
   const {
     mealsCat,
     drinksCat,
@@ -16,6 +17,7 @@ const ToggleCatButtons = ({ foodType }) => {
       setReFetch,
     },
   } = useContext(MeuContextoInterno);
+
   const foodCat = foodType === 'MEALS' ? mealsCat : drinksCat;
 
   const handleClick = ({ target: { id } }) => {
@@ -60,6 +62,10 @@ const ToggleCatButtons = ({ foodType }) => {
       ))}
     </div>
   );
+};
+
+ToggleCatButtons.propTypes = {
+  foodType: propTypes.string.isRequired,
 };
 
 export default ToggleCatButtons;
