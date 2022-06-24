@@ -11,13 +11,6 @@ const Food = () => {
   const { id: urlId } = useParams();
 
   const [recipeDetails, setRecipeDetails] = useState({});
-  const {
-    strMealThumb,
-    strMeal,
-    strCategory,
-    strInstructions,
-    strYoutube,
-  } = recipeDetails;
 
   useEffect(() => {
     const getRecipe = async () => {
@@ -28,6 +21,14 @@ const Food = () => {
     };
     getRecipe();
   }, [urlId]);
+
+  const {
+    strMealThumb,
+    strMeal,
+    strCategory,
+    strInstructions,
+    strYoutube,
+  } = recipeDetails;
 
   const filterIgredients = (recipe) => {
     const TWENTY = 20;

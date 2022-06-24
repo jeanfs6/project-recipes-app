@@ -47,6 +47,7 @@ function ProvedorContextoDoStars({ children }) {
     fetchApiDrinks();
   }, []);
 
+  // TODO: Refatorar para o uso do helper
   useEffect(() => {
     const MAX_CAT = 5;
     const getCatMeals = async () => {
@@ -58,6 +59,7 @@ function ProvedorContextoDoStars({ children }) {
     };
     getCatMeals();
   }, []);
+
   useEffect(() => {
     const MAX_CAT = 5;
     const getCatDrinks = async () => {

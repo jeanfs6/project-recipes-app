@@ -42,7 +42,7 @@ const Foods = ({ history }) => {
     <div className="l-foods">
       <Header title="Foods" search callback={ toggleSearchBar } />
       {search && (<SearchBar callback={ fetchFoods } />)}
-      <p>
+      <div>
         { mealsCat && mealsCat.map(({ strCategory: cat }, index) => (
           <button
             key={ index }
@@ -53,7 +53,7 @@ const Foods = ({ history }) => {
           </button>
         ))}
 
-      </p>
+      </div>
       {foods
         ? foods.slice(0, MAX_RECIPES).map((food, index) => (
           <RecipeCard
