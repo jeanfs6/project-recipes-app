@@ -6,6 +6,7 @@ import SearchBar from '../../component/searchBar';
 import Footer from '../../component/Footer';
 
 import RecipeCard from '../../component/recipeCard';
+import ToggleCatButtons from '../../component/toggleCatButtons';
 
 const MAX_RECIPES = 12;
 
@@ -14,7 +15,6 @@ const Drinks = ({ history }) => {
   const {
     recipes: { drinks },
     functions: { fetchSearch },
-    drinksCat,
   } = useContext(MeuContextoInterno);
 
   const toggleSearchBar = () => {
@@ -41,18 +41,7 @@ const Drinks = ({ history }) => {
     <div className="l-drink">
       <Header title="Drinks" search callback={ toggleSearchBar } />
       {search && (<SearchBar callback={ fetchDrinks } />)}
-      <p>
-        { drinksCat && drinksCat.map(({ strCategory: cat }, index) => (
-          <button
-            key={ index }
-            data-testid={ `${cat}-category-filter` }
-            type="button"
-          >
-            {cat}
-          </button>
-        ))}
-
-      </p>
+      <ToggleCatButtons foodType="DRINKS" />
       {drinks
         ? drinks.slice(0, MAX_RECIPES).map((drink, index) => (
           <RecipeCard
