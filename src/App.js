@@ -18,6 +18,8 @@ import ExpFoodsNat from './pages/Explore/especific/ExpFoodsNat';
 import Profile from './pages/Profile';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
+import FoodInProgress from './pages/food/FoodInProgress';
+import DrinkInProgress from './pages/drink/DrinkInProgress';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -28,11 +30,22 @@ function App() {
         <Route exact path="/" component={ Login } />
         <Route exact path="/foods" component={ Foods } />
         <Route exact path="/foods/:id" component={ Food } />
+        <Route
+          exact
+          path="/foods/:id/in-progress"
+          component={ FoodInProgress }
+        />
         <Route exact path="/drinks" component={ Drinks } />
         <Route exact path="/drinks/:id" component={ Drink } />
+        <Route
+          exact
+          path="/drinks/:id/in-progress"
+          component={ DrinkInProgress }
+        />
         <Route exact path="/explore" component={ Explore } />
         <Route exact path="/explore/foods" component={ ExploreFoods } />
         <Route exact path="/explore/drinks" component={ ExploreDrinks } />
+
         <Route
           exact
           path="/explore/foods/ingredients"

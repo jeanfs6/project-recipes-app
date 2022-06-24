@@ -1,24 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import YoutubeIcon from '../../images/youtube.svg';
 import shareIcon from '../../images/shareIcon.svg';
 import whiteHeartIcon from '../../images/whiteHeartIcon.svg';
 import '../../component/recipeCard.css';
-
-const arrayIndex = ['recipe1', 'recipe2', 'recipe3', 'recipe4', 'recipe5', 'recipe6'];
+import './food&drink.css';
+import Gallery from '../../component/Gallery';
+import { MeuContextoInterno } from '../../context';
+import * as localApi from '../../helpers/localApi/index';
 
 const Food = () => {
   const { id: urlId } = useParams();
 
   const [recipeDetails, setRecipeDetails] = useState({});
+  const [statistics, setStatistics] = useState({});
+
   const {
+    idMeal,
     strMealThumb,
     strMeal,
     strCategory,
     strInstructions,
     strYoutube,
   } = recipeDetails;
+  const {
+    recipes: { drinks },
+  } = useContext(MeuContextoInterno);
 
+  const SIX = 6;
+  const recomendation = drinks.slice(0, SIX);
   useEffect(() => {
     const getRecipe = async () => {
       const url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${urlId}`;
@@ -27,7 +37,27 @@ const Food = () => {
       setRecipeDetails(data.meals[0]);
     };
     getRecipe();
+    const getLocalStorage = () => {
+      const doneRecipes = localApi.getLocalKey('doneRecipes');
+      const favoriteRecipes = localApi.getLocalKey('favoriteRecipes');
+      const inProgressRecipes = localApi.getLocalKey('inProgressRecipes');
+      if ((doneRecipes && favoriteRecipes && inProgressRecipes) === null) {
+        return;
+      }
+      const done = doneRecipes.some(({ id }) => id === urlId);
+      const favorite = favoriteRecipes.some(({ id }) => id === urlId);
+      console.log(favorite);
+      const progress = inProgressRecipes.some(
+        ({ meals: { id } }) => id === urlId,
+      );
+      setStatistics({ done, favorite, progress });
+    };
+    getLocalStorage();
   }, [urlId]);
+
+  // const setInProgress = () => {
+
+  // }
 
   const filterIgredients = (recipe) => {
     const TWENTY = 20;
@@ -48,7 +78,9 @@ const Food = () => {
 
   return (
     <div>
-      <h1 data-testid="recipe-title" className="l-food">{ strMeal }</h1>
+      <h1 data-testid="recipe-title" className="l-food">
+        {strMeal}
+      </h1>
 
       <img
         className="card-img card-img-mine"
@@ -57,17 +89,11 @@ const Food = () => {
         alt={ strMeal }
       />
 
-      <button
-        type="button"
-        data-testid="share-btn"
-      >
+      <button type="button" data-testid="share-btn">
         <img src={ shareIcon } alt="Share" className="share-icon" />
       </button>
 
-      <button
-        type="button"
-        data-testid="favorite-btn"
-      >
+      <button type="button" data-testid="favorite-btn">
         <img src={ whiteHeartIcon } alt="Favorite" className="favorite-icon" />
       </button>
 
@@ -75,11 +101,8 @@ const Food = () => {
 
       <ul>
         {filterIgredients(recipeDetails).map((ingredient, index) => (
-          <li
-            key={ index }
-            data-testid={ `${index}-ingredient-name-and-measure` }
-          >
-            { ingredient }
+          <li key={ index } data-testid={ `${index}-ingredient-name-and-measure` }>
+            {ingredient}
           </li>
         ))}
       </ul>
@@ -95,16 +118,19 @@ const Food = () => {
         <img src={ YoutubeIcon } alt="Youtube" className="youtube-icon" />
       </a>
 
-      {arrayIndex.map((item, index) => (
-        <h3 key={ index } data-testid={ `${index}-recomendation-card` }>{item}</h3>
-      ))}
+      <Gallery recipes={ recomendation } type="drinks" />
+      {!statistics.done
+      && (
+        <Link to={ `/foods/${idMeal}/in-progress` }>
+          <button
+            className="start-button"
+            type="button"
+            data-testid="start-recipe-btn"
+          >
+            Start Recipe
+          </button>
+        </Link>)}
 
-      <button
-        type="button"
-        data-testid="start-recipe-btn"
-      >
-        Start
-      </button>
     </div>
   );
 };

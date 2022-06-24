@@ -1,21 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import shareIcon from '../../images/shareIcon.svg';
 import whiteHeartIcon from '../../images/whiteHeartIcon.svg';
 import '../../component/recipeCard.css';
-
-const arrayIndex = ['recipe1', 'recipe2', 'recipe3', 'recipe4', 'recipe5', 'recipe6'];
+import '../food/food&drink.css';
+import Gallery from '../../component/Gallery';
+import { MeuContextoInterno } from '../../context';
 
 const Drink = () => {
   const { id: urlId } = useParams();
 
   const [recipeDetails, setRecipeDetails] = useState({});
   const {
+    idDrink,
     strDrinkThumb,
     strDrink,
     strAlcoholic,
     strInstructions,
   } = recipeDetails;
+  const {
+    recipes: { foods },
+  } = useContext(MeuContextoInterno);
+
+  const SIX = 6;
+  const recomendation = foods.slice(0, SIX);
 
   useEffect(() => {
     const getRecipe = async () => {
@@ -84,16 +92,18 @@ const Drink = () => {
 
       <p data-testid="instructions">{strInstructions}</p>
 
-      {arrayIndex.map((item, index) => (
-        <h3 key={ index } data-testid={ `${index}-recomendation-card` }>{item}</h3>
-      ))}
-
-      <button
-        type="button"
-        data-testid="start-recipe-btn"
+      <Gallery recipes={ recomendation } type="Meal" />
+      <Link
+        to={ `/drinks/${idDrink}/in-progress` }
       >
-        Start
-      </button>
+        <button
+          className="start-button"
+          type="button"
+          data-testid="start-recipe-btn"
+        >
+          Start Recipe
+        </button>
+      </Link>
     </div>
   );
 };
