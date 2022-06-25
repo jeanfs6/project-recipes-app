@@ -1,24 +1,43 @@
 import React from 'react';
 import propTypes from 'prop-types';
-import Carousel from 'better-react-carousel';
 import RecomendationCard from './RecomendationCard';
 
 // Galeria
 export default function Gallery({ recipes, type }) {
   return (
-    <Carousel cols={ 2 } rows={ 1 } gap={ 10 } loop>
-      {
-        recipes.map((recipe, index) => (
-          <Carousel.Item key={ index }>
-            <RecomendationCard
-              recipe={ recipe }
-              type={ type }
-              index={ index }
-            />
-          </Carousel.Item>
-        ))
-      }
-    </Carousel>
+    <div id="carouselExampleControls" className="carousel slide" data-ride="carousel">
+      <div className="carousel-inner">
+        {
+          recipes.map((recipe, index) => (
+            <div key={ index } className="carousel-item active">
+              <RecomendationCard
+                recipe={ recipe }
+                type={ type }
+                index={ index }
+              />
+            </div>
+          ))
+        }
+      </div>
+      <a
+        className="carousel-control-prev"
+        href="#carouselExampleControls"
+        role="button"
+        data-slide="prev"
+      >
+        <span className="carousel-control-prev-icon" aria-hidden="true" />
+        <span className="sr-only">Previous</span>
+      </a>
+      <a
+        className="carousel-control-next"
+        href="#carouselExampleControls"
+        role="button"
+        data-slide="next"
+      >
+        <span className="carousel-control-next-icon" aria-hidden="true" />
+        <span className="sr-only">Next</span>
+      </a>
+    </div>
   );
 }
 
