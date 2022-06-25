@@ -7,7 +7,7 @@ import RecomendationCard from './RecomendationCard';
 // Galeria
 export default function Gallery({ recipes, type }) {
   return (
-    <Carousel>
+    <Carousel autoPlay dynamicHeight infiniteLoop>
       {
         recipes.map((recipe, index) => (
           <div key={ index }>
