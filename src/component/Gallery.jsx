@@ -3,6 +3,7 @@ import propTypes from 'prop-types';
 import Carousel from 'better-react-carousel';
 import RecomendationCard from './RecomendationCard';
 
+// Galeria
 export default function Gallery({ recipes, type }) {
   return (
     <Carousel cols={ 2 } rows={ 1 } gap={ 10 } loop>
