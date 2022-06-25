@@ -27,7 +27,6 @@ const Food = () => {
     recipes: { drinks },
   } = useContext(MeuContextoInterno);
 
-
   const SIX = 6;
   const recomendation = drinks.slice(0, SIX);
   useEffect(() => {
@@ -59,7 +58,6 @@ const Food = () => {
   // const setInProgress = () => {
 
   // }
-
 
   const filterIgredients = (recipe) => {
     const TWENTY = 20;
