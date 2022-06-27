@@ -14,6 +14,7 @@ const Food = () => {
   const [recipeDetails, setRecipeDetails] = useState({});
   const [isBtnEnable, setIsBtnEnable] = useState(false);
   const [isRecipeInProgress, setContinueBtn] = useState(true);
+  const [isURLcopied, setCopiedURL] = useState(false);
 
   useEffect(() => {
     const getRecipe = async () => {
@@ -63,6 +64,12 @@ const Food = () => {
     return ingredientList;
   };
 
+  const linkToClipboard = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    setCopiedURL(true);
+  };
+
   return (
     <div>
       <h1 data-testid="recipe-title" className="l-food">{ strMeal }</h1>
@@ -77,8 +84,10 @@ const Food = () => {
       <button
         type="button"
         data-testid="share-btn"
+        onClick={ () => linkToClipboard() }
       >
         <img src={ shareIcon } alt="Share" className="share-icon" />
+        { isURLcopied && <p>Link copied!</p> }
       </button>
 
       <button
@@ -120,7 +129,7 @@ const Food = () => {
           <button
             type="button"
             data-testid="start-recipe-btn"
-            className="start-btn btn btn-secondary btn-lg btn-block"
+            className="start-btn btn btn-secondary btn-lg"
           >
             { isRecipeInProgress ? 'Continue Recipe' : 'Start Recipe' }
           </button>

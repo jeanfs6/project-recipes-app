@@ -1,10 +1,10 @@
 .footer {
   bottom: 0;
-  position: center fixed;
+  position: fixed;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   background-color: rgb(228, 228, 228);
-  padding: 0.9rem;
-  border-radius: 0.5rem;
+  width: 355px;
+  padding: 1rem;
 }
