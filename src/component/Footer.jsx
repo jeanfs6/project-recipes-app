@@ -7,34 +7,28 @@ import './Footer.css';
 
 const Footer = () => (
   <footer className="footer" data-testid="footer">
-    <div>
-      <Link to="/drinks">
-        <img
-          data-testid="drinks-bottom-btn"
-          src={ drinkIcon }
-          alt="Drink Icon"
-        />
-      </Link>
-      <Link to="/explore">
-        <img
-          data-testid="explore-bottom-btn"
-          src={ exploreIcon }
-          alt="Explore Icon"
-        />
-      </Link>
-      <Link to="/foods">
-        <img
-          data-testid="food-bottom-btn"
-          src={ mealIcon }
-          alt="Food Icon"
-        />
-      </Link>
-    </div>
+    <Link to="/drinks">
+      <img
+        data-testid="drinks-bottom-btn"
+        src={ drinkIcon }
+        alt="Drink Icon"
+      />
+    </Link>
+    <Link to="/explore">
+      <img
+        data-testid="explore-bottom-btn"
+        src={ exploreIcon }
+        alt="Explore Icon"
+      />
+    </Link>
+    <Link to="/foods">
+      <img
+        data-testid="food-bottom-btn"
+        src={ mealIcon }
+        alt="Food Icon"
+      />
+    </Link>
   </footer>
 );
-
-// Footer.propTypes = {
-//   title: propTypes.string,
-// }.isRequired;
 
 export default Footer;
