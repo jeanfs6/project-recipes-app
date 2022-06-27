@@ -10,8 +10,11 @@ const Profile = () => {
 
   useEffect(() => {
     const getUserEmail = () => {
-      const { email } = localApi.getLocalKey('user');
-      setUserEmail(email);
+      const localStorage = localApi.getLocalKey('user');
+      if (localStorage) {
+        const { email } = localStorage;
+        setUserEmail(email);
+      }
     };
     getUserEmail();
   }, [setUserEmail]);
