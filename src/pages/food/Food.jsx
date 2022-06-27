@@ -120,7 +120,7 @@ const Food = () => {
           <button
             type="button"
             data-testid="start-recipe-btn"
-            className="start-btn btn btn-primary btn-dark"
+            className="start-btn btn btn-secondary btn-lg btn-block"
           >
             { isRecipeInProgress ? 'Continue Recipe' : 'Start Recipe' }
           </button>
