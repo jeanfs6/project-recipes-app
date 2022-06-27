@@ -48,6 +48,8 @@ const Food = () => {
   }, [urlId]);
 
   const {
+    strArea,
+    idMeal,
     strMealThumb,
     strMeal,
     strCategory,
@@ -79,6 +81,14 @@ const Food = () => {
   };
 
   const handleFavoriteBtn = () => {
+    localApi.setLocalKey('favoriteRecipes',
+      [{ id: idMeal,
+        type: 'food',
+        nationality: strArea,
+        category: strCategory,
+        alcoholicOrNot: '',
+        name: strMeal,
+        image: strMealThumb }]);
     setFavorite(!isFavorite);
   };
 

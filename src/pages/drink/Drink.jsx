@@ -18,6 +18,8 @@ const Drink = () => {
   const [isFavorite, setFavorite] = useState(false);
 
   const {
+    idDrink,
+    strCategory,
     strDrinkThumb,
     strDrink,
     strAlcoholic,
@@ -77,6 +79,14 @@ const Drink = () => {
   };
 
   const handleFavoriteBtn = () => {
+    localApi.setLocalKey('favoriteRecipes',
+      [{ id: idDrink,
+        type: 'drink',
+        nationality: '',
+        category: strCategory,
+        alcoholicOrNot: strAlcoholic,
+        name: strDrink,
+        image: strDrinkThumb }]);
     setFavorite(!isFavorite);
   };
 
