@@ -131,7 +131,7 @@ const Food = () => {
         {filterIgredients(recipeDetails).map((ingredient, index) => (
           <li
             key={ index }
-            data-testid={ `${index}-ingredient-name-and-measure` }
+            data-testid={ `${index}-ingredient-step` }
           >
             { ingredient }
           </li>
