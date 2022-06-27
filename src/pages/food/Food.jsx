@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import YoutubeIcon from '../../images/youtube.svg';
 import shareIcon from '../../images/shareIcon.svg';
 import whiteHeartIcon from '../../images/whiteHeartIcon.svg';
 import '../../component/recipeCard.css';
+import * as localApi from '../../helpers/localApi/index';
 
 const arrayIndex = ['recipe1', 'recipe2', 'recipe3', 'recipe4', 'recipe5', 'recipe6'];
 
@@ -11,6 +12,8 @@ const Food = () => {
   const { id: urlId } = useParams();
 
   const [recipeDetails, setRecipeDetails] = useState({});
+  const [isBtnEnable, setIsBtnEnable] = useState(false);
+  const [isRecipeInProgress, setContinueBtn] = useState(true);
 
   useEffect(() => {
     const getRecipe = async () => {
@@ -20,6 +23,19 @@ const Food = () => {
       setRecipeDetails(data.meals[0]);
     };
     getRecipe();
+    const verifyInProgress = () => {
+      const inProgressRecipes = localApi
+        .getLocalKey('inProgressRecipes') || { meals: {} };
+      const isInProgress = urlId in inProgressRecipes.meals;
+      setContinueBtn(isInProgress);
+    };
+    verifyInProgress();
+    const verifyIsDone = () => {
+      const doneRecipes = localApi.getLocalKey('doneRecipes') || [];
+      const recipeIsDone = doneRecipes.some(({ id }) => id === urlId);
+      setIsBtnEnable(!recipeIsDone);
+    };
+    verifyIsDone();
   }, [urlId]);
 
   const {
@@ -99,13 +115,17 @@ const Food = () => {
       {arrayIndex.map((item, index) => (
         <h3 key={ index } data-testid={ `${index}-recomendation-card` }>{item}</h3>
       ))}
-
-      <button
-        type="button"
-        data-testid="start-recipe-btn"
-      >
-        Start
-      </button>
+      {isBtnEnable && (
+        <Link to={ `${urlId}/in-progress` }>
+          <button
+            type="button"
+            data-testid="start-recipe-btn"
+            className="start-btn btn btn-primary btn-dark"
+          >
+            { isRecipeInProgress ? 'Continue Recipe' : 'Start Recipe' }
+          </button>
+        </Link>
+      )}
     </div>
   );
 };

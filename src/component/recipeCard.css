@@ -29,3 +29,9 @@
   margin-right: 0.5rem;
   width: 2rem;
 }
+
+.start-btn {
+  bottom: 0;
+  position: fixed;
+  width: 100%;
+}

@@ -8,6 +8,7 @@ const Login = ({ history }) => {
   const [password, setPassword] = useState('');
   const [errorEmail, setErrorEmail] = useState(true);
   const [errorPassword, setErrorPassword] = useState(true);
+  console.log(password);
 
   const validadorEmail = (value) => {
     const regex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
@@ -28,10 +29,12 @@ const Login = ({ history }) => {
   };
 
   const handleSubmit = () => {
-    console.log(email, password);
     localApi.setLocalKey('mealsToken', '1');
     localApi.setLocalKey('cocktailsToken', '1');
     localApi.setLocalKey('user', { email });
+    localApi.setLocalKey('doneRecipes', []);
+    localApi.setLocalKey('favoriteRecipes', []);
+    localApi.setLocalKey('inProgressRecipes', { cocktails: {}, meals: {} });
     history.push('/foods');
   };
 
