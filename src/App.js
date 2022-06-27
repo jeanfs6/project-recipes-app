@@ -20,6 +20,7 @@ import ExpFoodsNat from './pages/Explore/especific/ExpFoodsNat';
 import Profile from './pages/Profile';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
+import NotFound from './component/NotFound';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -55,6 +56,7 @@ function App() {
         <Route exact path="/profile" component={ Profile } />
         <Route exact path="/done-recipes" component={ DoneRecipes } />
         <Route exact path="/favorite-recipes" component={ FavoriteRecipes } />
+        <Route path="*" exact component={ NotFound } />
       </Switch>
     </BrowserRouter>
   );
