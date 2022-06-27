@@ -76,6 +76,10 @@ const Drink = () => {
     setCopiedURL(true);
   };
 
+  const handleFavoriteBtn = () => {
+    setFavorite(!isFavorite);
+  };
+
   return (
     <div>
       <h1 data-testid="recipe-title" className="l-drink">{ strDrink }</h1>
@@ -99,6 +103,7 @@ const Drink = () => {
       <button
         type="button"
         data-testid="favorite-btn"
+        onClick={ () => handleFavoriteBtn() }
         src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
       >
         <img
