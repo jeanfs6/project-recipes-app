@@ -43,7 +43,20 @@ const FoodInProgress = () => {
       setFavorite(checkIsFavorite);
     };
     verifyIsFavorite();
-  }, [urlId]);
+    const resultLocalStorage = localApi.getLocalKey('inProgressRecipes') || [];
+    const getIngredient = () => {
+      const resultIng = resultLocalStorage.meals;
+      // setCheckedIng(valueIngredients);
+      setCheckedIng(resultIng[urlId] || []);
+    };
+    getIngredient();
+    const setIngredient = () => {
+      // const resultLocalStorage = localApi.getLocalKey('inProgressRecipes');
+      localApi.setLocalKey('inProgressRecipes',
+        { ...resultLocalStorage, meals: { [urlId]: [checkedIng] } });
+    };
+    setIngredient();
+  }, [urlId, checkedIng, setCheckedIng]);
 
   const {
     strArea,
@@ -89,12 +102,12 @@ const FoodInProgress = () => {
   };
 
   const verifyChecked = ({ target }) => {
-    const id = Number(target.id);
+    const nameIngredient = (target.name);
     if (target.checked) {
-      setCheckedIng([...checkedIng, id]);
+      setCheckedIng([...checkedIng, nameIngredient]);
     }
-    if (!target.checked && checkedIng.includes(id)) {
-      setCheckedIng(checkedIng.filter((ingredient) => ingredient !== id));
+    if (!target.checked && checkedIng.includes(nameIngredient)) {
+      setCheckedIng(checkedIng.filter((ingredient) => ingredient !== nameIngredient));
     }
   };
 
@@ -137,14 +150,16 @@ const FoodInProgress = () => {
         {filterIgredients(foodInProgress).map((ingredient, index) => (
           <li
             style={
-              (checkedIng.includes(index)) ? ({ textDecoration: 'line-through' }) : null
+              (checkedIng.includes(ingredient)) ? ({ textDecoration: 'line-through' })
+
+                : null
             }
             data-testid={ `${index}-ingredient-step` }
             key={ index }
           >
             <input
               type="checkbox"
-              name="ingredient"
+              name={ ingredient }
               id={ index }
               onChange={ verifyChecked }
             />
