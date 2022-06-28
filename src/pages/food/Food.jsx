@@ -57,7 +57,7 @@ const Food = () => {
     strYoutube,
   } = recipeDetails;
 
-  const filterIgredients = (recipe) => {
+  const filterIngredients = (recipe) => {
     const TWENTY = 20;
     const ingredientList = [];
 
@@ -128,10 +128,10 @@ const Food = () => {
       <p data-testid="recipe-category">{strCategory}</p>
 
       <ul>
-        {filterIgredients(recipeDetails).map((ingredient, index) => (
+        {filterIngredients(recipeDetails).map((ingredient, index) => (
           <li
             key={ index }
-            data-testid={ `${index}-ingredient-step` }
+            data-testid={ `${index}-ingredient-name-and-measure` }
           >
             { ingredient }
           </li>

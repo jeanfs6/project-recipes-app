@@ -8,14 +8,13 @@ import * as localApi from '../../helpers/localApi/index';
 
 const FoodInProgress = () => {
   const { id: urlId } = useParams();
-  console.log(urlId);
 
   const [foodInProgress, setFoodInProgress] = useState({});
   const [isBtnEnable, setIsBtnEnable] = useState(false);
   const [isRecipeInProgress, setContinueBtn] = useState(true);
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [checkedIng, setCheckedIng] = useState([]);
 
   useEffect(() => {
     const getRecipe = async () => {
@@ -68,7 +67,6 @@ const FoodInProgress = () => {
         ingredientList.push(ingredient);
       }
     }
-
     return ingredientList;
   };
 
@@ -89,8 +87,15 @@ const FoodInProgress = () => {
         image: strMealThumb });
     setFavorite(!isFavorite);
   };
+
   const verifyChecked = ({ target }) => {
-    setIsChecked(target.checked);
+    const id = Number(target.id);
+    if (target.checked) {
+      setCheckedIng([...checkedIng, id]);
+    }
+    if (!target.checked && checkedIng.includes(id)) {
+      setCheckedIng(checkedIng.filter((ingredient) => ingredient !== id));
+    }
   };
 
   return (
@@ -130,21 +135,21 @@ const FoodInProgress = () => {
 
       <ul>
         {filterIgredients(foodInProgress).map((ingredient, index) => (
-          <label
-            htmlFor="ingredient"
-            key={ index }
+          <li
+            style={
+              (checkedIng.includes(index)) ? ({ textDecoration: 'line-through' }) : null
+            }
             data-testid={ `${index}-ingredient-step` }
+            key={ index }
           >
-
             <input
               type="checkbox"
               name="ingredient"
-              id="ingredient"
-              onChange={ (event) => verifyChecked(event) }
-
+              id={ index }
+              onChange={ verifyChecked }
             />
-            <li className={ isChecked && 'bi bi-type-strikethrough' }>{ ingredient }</li>
-          </label>
+            { ingredient }
+          </li>
         ))}
       </ul>
 

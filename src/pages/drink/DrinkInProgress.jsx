@@ -14,6 +14,7 @@ const DrinkInProgress = () => {
   const [isRecipeInProgress, setContinueBtn] = useState(true);
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
+  const [checkedIng, setCheckedIng] = useState([]);
 
   const {
     idDrink,
@@ -88,6 +89,16 @@ const DrinkInProgress = () => {
     setFavorite(!isFavorite);
   };
 
+  const verifyChecked = ({ target }) => {
+    const id = Number(target.id);
+    if (target.checked) {
+      setCheckedIng([...checkedIng, id]);
+    }
+    if (!target.checked && checkedIng.includes(id)) {
+      setCheckedIng(checkedIng.filter((ingredient) => ingredient !== id));
+    }
+  };
+
   return (
     <div>
       <h1 data-testid="recipe-title" className="l-drink">{ strDrink }</h1>
@@ -125,16 +136,21 @@ const DrinkInProgress = () => {
 
       <ul>
         {filterIgredients(drinkInProgress).map((ingredient, index) => (
-
-          <label
-            key={ index }
+          <li
+            style={
+              (checkedIng.includes(index)) ? ({ textDecoration: 'line-through' }) : null
+            }
             data-testid={ `${index}-ingredient-step` }
-            htmlFor="ingredient"
+            key={ index }
           >
-            <input type="checkbox" name="ingredient" id="ingredient" />
+            <input
+              type="checkbox"
+              name="ingredient"
+              id={ index }
+              onChange={ verifyChecked }
+            />
             { ingredient }
-          </label>
-
+          </li>
         ))}
       </ul>
 
