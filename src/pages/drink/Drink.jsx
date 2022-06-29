@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import shareIcon from '../../images/shareIcon.svg';
 import whiteHeartIcon from '../../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../../images/blackHeartIcon.svg';
 import '../../component/recipeCard.css';
+import Gallery from '../../component/Gallery';
+import { MeuContextoInterno } from '../../context';
 import * as localApi from '../../helpers/localApi/index';
-
-const arrayIndex = ['recipe1', 'recipe2', 'recipe3', 'recipe4', 'recipe5', 'recipe6'];
 
 const Drink = () => {
   const { id: urlId } = useParams();
@@ -16,6 +16,13 @@ const Drink = () => {
   const [isRecipeInProgress, setContinueBtn] = useState(true);
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
+
+  const {
+    recipes: { drinks },
+  } = useContext(MeuContextoInterno);
+
+  const SIX = 4;
+  const recomendation = drinks.slice(0, SIX);
 
   const {
     idDrink,
@@ -138,9 +145,7 @@ const Drink = () => {
 
       <p data-testid="instructions">{strInstructions}</p>
 
-      {arrayIndex.map((item, index) => (
-        <h3 key={ index } data-testid={ `${index}-recomendation-card` }>{item}</h3>
-      ))}
+      <Gallery recipes={ recomendation } type="drinks" />
       {isBtnEnable && (
         <Link to={ `${urlId}/in-progress` }>
           <button
