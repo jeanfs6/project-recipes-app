@@ -12,8 +12,12 @@ export const filterIgredients = (recipe) => {
     const ingredientKey = `strIngredient${i}`;
     const measureKey = `strMeasure${i}`;
 
-    if (recipe[ingredientKey] !== '' && recipe[measureKey] !== '') {
+    if (recipe[ingredientKey] !== ''
+    && recipe[measureKey] !== ''
+    && recipe[ingredientKey] !== null
+    && recipe[measureKey] !== null) {
       const ingredient = `${recipe[ingredientKey]}: ${recipe[measureKey]}`;
+      console.log(`Empurrando:${ingredient}`);
       ingredientList.push(ingredient);
     }
   }

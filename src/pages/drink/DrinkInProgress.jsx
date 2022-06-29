@@ -14,7 +14,8 @@ const DrinkInProgress = () => {
   const inProgressRecipes = localApi.getLocalKey('inProgressRecipes');
 
   const getIngredient = () => {
-    const resultIng = inProgressRecipes?.cocktails;
+    const resultIng = inProgressRecipes?.cocktails || [];
+    console.log(inProgressRecipes);
     const alreadyChecked = resultIng[urlId] || [];
     return alreadyChecked;
   };
@@ -25,10 +26,11 @@ const DrinkInProgress = () => {
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
   const [checkedIng, setCheckedIng] = useState(getIngredient());
+  const [loading, setLoading] = useState(true);
 
   const setIngredient = () => {
     localApi.setLocalKey('inProgressRecipes',
-      { ...inProgressRecipes, cocktails: { [urlId]: checkedIng } });
+      { ...inProgressRecipes, cocktails: { [`${urlId}`]: checkedIng } });
   };
   setIngredient();
 
@@ -38,6 +40,7 @@ const DrinkInProgress = () => {
       const response = await fetch(url);
       const data = await response.json();
       setDrinkInProgress(data.drinks[0]);
+      setLoading(false);
     };
     getRecipe();
     const verifyInProgress = () => {
@@ -84,73 +87,79 @@ const DrinkInProgress = () => {
 
   return (
     <div>
-      <h1 data-testid="recipe-title" className="l-drink">{ strDrink }</h1>
+      {loading ? (<div className="loading">Loading...</div>)
+        : (
+          <div>
+            <h1 data-testid="recipe-title" className="l-drink">{ strDrink }</h1>
 
-      <img
-        className="card-img card-img-mine"
-        data-testid="recipe-photo"
-        src={ strDrinkThumb }
-        alt={ strDrink }
-      />
-
-      <button
-        type="button"
-        data-testid="share-btn"
-        onClick={ () => setCopiedURL((linkToClipboard())) }
-      >
-        <img src={ shareIcon } alt="Share" className="share-icon" />
-        { isURLcopied && <p>Link copied!</p> }
-      </button>
-
-      <button
-        type="button"
-        data-testid="favorite-btn"
-        onClick={ () => handleFavoriteBtn() }
-        src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
-      >
-        <img
-          src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
-          alt="Favorite"
-          className="favorite-icon"
-        />
-      </button>
-
-      <p data-testid="recipe-category">{strAlcoholic}</p>
-
-      <ul>
-        {filterIgredients(drinkInProgress).map((ingredient, index) => (
-          <li
-            style={
-              (checkedIng.includes(ingredient)) ? ({ textDecoration: 'line-through' })
-                : null
-            }
-            data-testid={ `${index}-ingredient-step` }
-            key={ index }
-          >
-            <input
-              type="checkbox"
-              name={ ingredient }
-              id={ index }
-              checked={ checkedIng.includes(ingredient) }
-              onChange={ (e) => setCheckedIng(verifyChecked(e, checkedIng)) }
+            <img
+              className="card-img card-img-mine"
+              data-testid="recipe-photo"
+              src={ strDrinkThumb }
+              alt={ strDrink }
             />
-            { ingredient }
-          </li>
-        ))}
-      </ul>
 
-      <p data-testid="instructions">{strInstructions}</p>
-      {isBtnEnable && (
-        <Link to={ `${urlId}/in-progress` }>
-          <button
-            type="button"
-            data-testid="finish-recipe-btn"
-            className="start-btn btn btn-primary btn-lg"
-          >
-            { isRecipeInProgress ? 'Continue Recipe' : 'Finish Recipe' }
-          </button>
-        </Link>
-      )}
+            <button
+              type="button"
+              data-testid="share-btn"
+              onClick={ () => setCopiedURL((linkToClipboard())) }
+            >
+              <img src={ shareIcon } alt="Share" className="share-icon" />
+              { isURLcopied && <p>Link copied!</p> }
+            </button>
+
+            <button
+              type="button"
+              data-testid="favorite-btn"
+              onClick={ () => handleFavoriteBtn() }
+              src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+            >
+              <img
+                src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+                alt="Favorite"
+                className="favorite-icon"
+              />
+            </button>
+
+            <p data-testid="recipe-category">{strAlcoholic}</p>
+
+            <ul>
+              {filterIgredients(drinkInProgress).map((ingredient, index) => (
+                <li
+                  style={
+                    (checkedIng.includes(ingredient)) ? (
+                      { textDecoration: 'line-through' })
+                      : null
+                  }
+                  data-testid={ `${index}-ingredient-step` }
+                  key={ index }
+                >
+                  <input
+                    type="checkbox"
+                    name={ ingredient }
+                    id={ index }
+                    checked={ checkedIng.includes(ingredient) }
+                    onChange={ (e) => setCheckedIng(verifyChecked(e, checkedIng)) }
+                  />
+                  { ingredient }
+                </li>
+              ))}
+            </ul>
+
+            <p data-testid="instructions">{strInstructions}</p>
+            {isBtnEnable && (
+              <Link to={ `${urlId}/in-progress` }>
+                <button
+                  type="button"
+                  data-testid="finish-recipe-btn"
+                  className="start-btn btn btn-primary btn-lg"
+                >
+                  { isRecipeInProgress ? 'Continue Recipe' : 'Finish Recipe' }
+                </button>
+              </Link>
+            )}
+          </div>
+        )}
     </div>
   );
 };

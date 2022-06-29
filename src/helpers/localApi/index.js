@@ -4,14 +4,14 @@ export const setLocalKey = (key, value) => {
   localStorage.setItem(key, stringified);
 
   // Verificando se realmente setou
-  const itemSeted = localStorage.getItem(key);
-  console.log('setLocalKey', JSON.parse(itemSeted));
+  // const itemSeted = localStorage.getItem(key);
+  // console.log('setLocalKey', JSON.parse(itemSeted));
 };
 
 export const getLocalKey = (key) => {
   // Pegando o item
   const itemGeted = localStorage.getItem(key);
-  console.log(`getLocalKey: ${JSON.parse(itemGeted)}`);
+  // console.log(`getLocalKey: ${JSON.parse(itemGeted)}`);
   return JSON.parse(itemGeted);
 };
 
