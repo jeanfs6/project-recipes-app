@@ -4,7 +4,27 @@ import Header from '../component/header';
 const FavoriteRecipes = () => (
   <div className="l-favorite-recipes">
     <Header title="Favorite Recipes" />
-    FavoriteRecipes
+    <section>
+      <button
+        type="button"
+        data-testid="filter-by-all-btn"
+      >
+        All
+      </button>
+      <button
+        type="button"
+        data-testid="filter-by-food-btn"
+      >
+        Food
+      </button>
+      <button
+        type="button"
+        data-testid="filter-by-drink-btn"
+      >
+        Drinks
+      </button>
+    </section>
+
   </div>
 );
 

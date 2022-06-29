@@ -156,7 +156,7 @@ const FoodInProgress = () => {
       <p data-testid="instructions">{strInstructions}</p>
 
       {isBtnEnable && (
-        <Link to={ `${urlId}/in-progress` }>
+        <Link to="/in-progress">
           <button
             type="button"
             data-testid="finish-recipe-btn"
