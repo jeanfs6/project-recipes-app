@@ -21,6 +21,7 @@ import Profile from './pages/Profile';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
 import NotFound from './component/NotFound';
+
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -35,9 +36,11 @@ function App() {
         <Route exact path="/drinks" component={ Drinks } />
         <Route exact path="/drinks/:id" component={ Drink } />
         <Route exact path="/drinks/:id/in-progress" component={ DrinkInProgress } />
+
         <Route exact path="/explore" component={ Explore } />
         <Route exact path="/explore/foods" component={ ExploreFoods } />
         <Route exact path="/explore/drinks" component={ ExploreDrinks } />
+
         <Route
           exact
           path="/explore/foods/ingredients"
