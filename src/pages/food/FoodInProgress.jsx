@@ -5,29 +5,46 @@ import whiteHeartIcon from '../../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../../images/blackHeartIcon.svg';
 import '../../component/recipeCard.css';
 import * as localApi from '../../helpers/localApi/index';
+import {
+  linkToClipboard, filterIgredients, verifyChecked,
+} from '../../helpers/Handlers/index';
 
 const FoodInProgress = () => {
   const { id: urlId } = useParams();
+  const inProgressRecipes = localApi.getLocalKey('inProgressRecipes');
+
+  const getIngredient = () => {
+    const resultIng = inProgressRecipes?.meals || [];
+    const alreadyChecked = resultIng[urlId] || [];
+    return alreadyChecked;
+  };
 
   const [foodInProgress, setFoodInProgress] = useState({});
   const [isBtnEnable, setIsBtnEnable] = useState(false);
   const [isRecipeInProgress, setContinueBtn] = useState(true);
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
-  const [checkedIng, setCheckedIng] = useState([]);
+  const [checkedIng, setCheckedIng] = useState(getIngredient());
+
+  const setIngredient = () => {
+    localApi.setLocalKey('inProgressRecipes',
+      { ...inProgressRecipes, meals: { [urlId]: checkedIng } });
+  };
+  setIngredient();
 
   useEffect(() => {
     const getRecipe = async () => {
       const url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${urlId}`;
       const response = await fetch(url);
       const data = await response.json();
-      setFoodInProgress(data.meals[0]);
+      setFoodInProgress(data?.meals[0] || []);
     };
     getRecipe();
+
     const verifyInProgress = () => {
-      const inProgressRecipes = localApi
+      const APIresult = localApi
         .getLocalKey('inProgressRecipes') || { meals: {} };
-      const isInProgress = urlId in inProgressRecipes.meals;
+      const isInProgress = urlId in APIresult.meals;
       setContinueBtn(isInProgress);
     };
     verifyInProgress();
@@ -43,72 +60,27 @@ const FoodInProgress = () => {
       setFavorite(checkIsFavorite);
     };
     verifyIsFavorite();
-    const resultLocalStorage = localApi.getLocalKey('inProgressRecipes') || [];
-    const getIngredient = () => {
-      const resultIng = resultLocalStorage.meals;
-      // setCheckedIng(valueIngredients);
-      setCheckedIng(resultIng[urlId] || []);
-    };
-    getIngredient();
-    const setIngredient = () => {
-      // const resultLocalStorage = localApi.getLocalKey('inProgressRecipes');
-      localApi.setLocalKey('inProgressRecipes',
-        { ...resultLocalStorage, meals: { [urlId]: [checkedIng] } });
-    };
-    setIngredient();
   }, [urlId, checkedIng, setCheckedIng]);
 
   const {
-    strArea,
     idMeal,
+    strArea,
     strMealThumb,
     strMeal,
     strCategory,
     strInstructions,
   } = foodInProgress;
 
-  const filterIgredients = (recipe) => {
-    const Eight = 8;
-    const ingredientList = [];
-
-    for (let i = 1; i <= Eight; i += 1) {
-      const ingredientKey = `strIngredient${i}`;
-      const measureKey = `strMeasure${i}`;
-
-      if (recipe[ingredientKey] !== '' && recipe[measureKey] !== '') {
-        const ingredient = `${recipe[ingredientKey]}: ${recipe[measureKey]}`;
-        ingredientList.push(ingredient);
-      }
-    }
-    return ingredientList;
-  };
-
-  const linkToClipboard = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    setCopiedURL(true);
-  };
-
   const handleFavoriteBtn = () => {
-    localApi.setLocalKey('inProgressRecipes',
-      { id: idMeal,
+    localApi.setLocalKey('favoriteRecipes',
+      [{ id: idMeal,
         type: 'food',
         nationality: strArea,
         category: strCategory,
         alcoholicOrNot: '',
         name: strMeal,
-        image: strMealThumb });
+        image: strMealThumb }]);
     setFavorite(!isFavorite);
-  };
-
-  const verifyChecked = ({ target }) => {
-    const nameIngredient = (target.name);
-    if (target.checked) {
-      setCheckedIng([...checkedIng, nameIngredient]);
-    }
-    if (!target.checked && checkedIng.includes(nameIngredient)) {
-      setCheckedIng(checkedIng.filter((ingredient) => ingredient !== nameIngredient));
-    }
   };
 
   return (
@@ -125,7 +97,7 @@ const FoodInProgress = () => {
       <button
         type="button"
         data-testid="share-btn"
-        onClick={ () => linkToClipboard() }
+        onClick={ () => setCopiedURL((linkToClipboard())) }
       >
         <img src={ shareIcon } alt="Share" className="share-icon" />
         { isURLcopied && <p>Link copied!</p> }
@@ -151,7 +123,6 @@ const FoodInProgress = () => {
           <li
             style={
               (checkedIng.includes(ingredient)) ? ({ textDecoration: 'line-through' })
-
                 : null
             }
             data-testid={ `${index}-ingredient-step` }
@@ -160,8 +131,9 @@ const FoodInProgress = () => {
             <input
               type="checkbox"
               name={ ingredient }
-              id={ index }
-              onChange={ verifyChecked }
+              id={ ingredient }
+              checked={ checkedIng.includes(ingredient) }
+              onChange={ (e) => setCheckedIng(verifyChecked(e, checkedIng)) }
             />
             { ingredient }
           </li>

@@ -5,25 +5,32 @@ import whiteHeartIcon from '../../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../../images/blackHeartIcon.svg';
 import '../../component/recipeCard.css';
 import * as localApi from '../../helpers/localApi/index';
+import {
+  linkToClipboard, filterIgredients, verifyChecked,
+} from '../../helpers/Handlers/index';
 
 const DrinkInProgress = () => {
   const { id: urlId } = useParams();
+  const inProgressRecipes = localApi.getLocalKey('inProgressRecipes');
+
+  const getIngredient = () => {
+    const resultIng = inProgressRecipes?.cocktails;
+    const alreadyChecked = resultIng[urlId] || [];
+    return alreadyChecked;
+  };
 
   const [drinkInProgress, setDrinkInProgress] = useState({});
   const [isBtnEnable, setIsBtnEnable] = useState(false);
   const [isRecipeInProgress, setContinueBtn] = useState(true);
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
-  const [checkedIng, setCheckedIng] = useState([]);
+  const [checkedIng, setCheckedIng] = useState(getIngredient());
 
-  const {
-    idDrink,
-    strCategory,
-    strDrinkThumb,
-    strDrink,
-    strAlcoholic,
-    strInstructions,
-  } = drinkInProgress;
+  const setIngredient = () => {
+    localApi.setLocalKey('inProgressRecipes',
+      { ...inProgressRecipes, cocktails: { [urlId]: checkedIng } });
+  };
+  setIngredient();
 
   useEffect(() => {
     const getRecipe = async () => {
@@ -34,9 +41,9 @@ const DrinkInProgress = () => {
     };
     getRecipe();
     const verifyInProgress = () => {
-      const inProgressRecipes = localApi
+      const APIresult = localApi
         .getLocalKey('inProgressRecipes') || { cocktails: {} };
-      const isInProgress = urlId in inProgressRecipes.cocktails;
+      const isInProgress = urlId in APIresult.cocktails;
       setContinueBtn(isInProgress);
     };
     verifyInProgress();
@@ -54,28 +61,14 @@ const DrinkInProgress = () => {
     verifyIsFavorite();
   }, [urlId]);
 
-  const filterIgredients = (recipe) => {
-    const THREE = 3;
-    const ingredientList = [];
-
-    for (let i = 1; i <= THREE; i += 1) {
-      const ingredientKey = `strIngredient${i}`;
-      const measureKey = `strMeasure${i}`;
-
-      if (recipe[ingredientKey] !== null && recipe[measureKey] !== null) {
-        const ingredient = `${recipe[ingredientKey]}: ${recipe[measureKey]}`;
-        ingredientList.push(ingredient);
-      }
-    }
-
-    return ingredientList;
-  };
-
-  const linkToClipboard = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    setCopiedURL(true);
-  };
+  const {
+    idDrink,
+    strCategory,
+    strDrinkThumb,
+    strDrink,
+    strAlcoholic,
+    strInstructions,
+  } = drinkInProgress;
 
   const handleFavoriteBtn = () => {
     localApi.setLocalKey('favoriteRecipes',
@@ -87,16 +80,6 @@ const DrinkInProgress = () => {
         name: strDrink,
         image: strDrinkThumb }]);
     setFavorite(!isFavorite);
-  };
-
-  const verifyChecked = ({ target }) => {
-    const id = Number(target.id);
-    if (target.checked) {
-      setCheckedIng([...checkedIng, id]);
-    }
-    if (!target.checked && checkedIng.includes(id)) {
-      setCheckedIng(checkedIng.filter((ingredient) => ingredient !== id));
-    }
   };
 
   return (
@@ -113,7 +96,7 @@ const DrinkInProgress = () => {
       <button
         type="button"
         data-testid="share-btn"
-        onClick={ () => linkToClipboard() }
+        onClick={ () => setCopiedURL((linkToClipboard())) }
       >
         <img src={ shareIcon } alt="Share" className="share-icon" />
         { isURLcopied && <p>Link copied!</p> }
@@ -138,16 +121,18 @@ const DrinkInProgress = () => {
         {filterIgredients(drinkInProgress).map((ingredient, index) => (
           <li
             style={
-              (checkedIng.includes(index)) ? ({ textDecoration: 'line-through' }) : null
+              (checkedIng.includes(ingredient)) ? ({ textDecoration: 'line-through' })
+                : null
             }
             data-testid={ `${index}-ingredient-step` }
             key={ index }
           >
             <input
               type="checkbox"
-              name="ingredient"
+              name={ ingredient }
               id={ index }
-              onChange={ verifyChecked }
+              checked={ checkedIng.includes(ingredient) }
+              onChange={ (e) => setCheckedIng(verifyChecked(e, checkedIng)) }
             />
             { ingredient }
           </li>
