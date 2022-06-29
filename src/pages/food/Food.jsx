@@ -18,21 +18,6 @@ const Food = () => {
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
 
-
-  const {
-    idMeal,
-    strMealThumb,
-    strMeal,
-    strCategory,
-    strInstructions,
-    strYoutube,
-  } = recipeDetails;
-  const {
-    recipes: { drinks },
-  } = useContext(MeuContextoInterno);
-
-  const SIX = 6;
-  const recomendation = drinks.slice(0, SIX);
   useEffect(() => {
     const getRecipe = async () => {
       const url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${urlId}`;
@@ -109,9 +94,7 @@ const Food = () => {
 
   return (
     <div>
-      <h1 data-testid="recipe-title" className="l-food">
-        {strMeal}
-      </h1>
+      <h1 data-testid="recipe-title" className="l-food">{ strMeal }</h1>
 
       <img
         className="card-img card-img-mine"
