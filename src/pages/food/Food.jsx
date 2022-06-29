@@ -17,7 +17,6 @@ const Food = () => {
   const [isRecipeInProgress, setContinueBtn] = useState(true);
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getRecipe = async () => {
@@ -25,13 +24,12 @@ const Food = () => {
       const response = await fetch(url);
       const data = await response.json();
       setRecipeDetails(data.meals[0]);
-      setLoading(false);
     };
     getRecipe();
     const verifyInProgress = () => {
       const inProgressRecipes = localApi
-        .getLocalKey('inProgressRecipes').meals || [];
-      const isInProgress = urlId in inProgressRecipes;
+        .getLocalKey('inProgressRecipes') || { meals: {} };
+      const isInProgress = urlId in inProgressRecipes.meals;
       setContinueBtn(isInProgress);
     };
     verifyInProgress();
@@ -96,78 +94,74 @@ const Food = () => {
 
   return (
     <div>
-      {loading ? (<div>Loading...</div>) : (
-        <div>
-          <h1 data-testid="recipe-title" className="l-food">{ strMeal }</h1>
+      <h1 data-testid="recipe-title" className="l-food">{ strMeal }</h1>
 
-          <img
-            className="card-img card-img-mine"
-            data-testid="recipe-photo"
-            src={ strMealThumb }
-            alt={ strMeal }
-          />
+      <img
+        className="card-img card-img-mine"
+        data-testid="recipe-photo"
+        src={ strMealThumb }
+        alt={ strMeal }
+      />
 
+      <button
+        type="button"
+        data-testid="share-btn"
+        onClick={ () => linkToClipboard() }
+      >
+        <img src={ shareIcon } alt="Share" className="share-icon" />
+        { isURLcopied && <p>Link copied!</p> }
+      </button>
+
+      <button
+        type="button"
+        data-testid="favorite-btn"
+        onClick={ () => handleFavoriteBtn() }
+        src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+      >
+        <img
+          src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+          alt="Favorite"
+          className="favorite-icon"
+        />
+      </button>
+
+      <p data-testid="recipe-category">{strCategory}</p>
+
+      <ul>
+        {filterIngredients(recipeDetails).map((ingredient, index) => (
+          <li
+            key={ index }
+            data-testid={ `${index}-ingredient-name-and-measure` }
+          >
+            { ingredient }
+          </li>
+        ))}
+      </ul>
+
+      <p data-testid="instructions">{strInstructions}</p>
+
+      <a
+        data-testid="video"
+        href={ strYoutube }
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src={ YoutubeIcon } alt="Youtube" className="youtube-icon" />
+      </a>
+
+      {arrayIndex.map((item, index) => (
+        <h3 key={ index } data-testid={ `${index}-recomendation-card` }>{item}</h3>
+      ))}
+      {isBtnEnable && (
+        <Link to={ `${urlId}/in-progress` }>
           <button
             type="button"
-            data-testid="share-btn"
-            onClick={ () => linkToClipboard() }
+            data-testid="start-recipe-btn"
+            className="start-btn btn btn-secondary btn-lg"
           >
-            <img src={ shareIcon } alt="Share" className="share-icon" />
-            { isURLcopied && <p>Link copied!</p> }
+            { isRecipeInProgress ? 'Continue Recipe' : 'Start Recipe' }
           </button>
-
-          <button
-            type="button"
-            data-testid="favorite-btn"
-            onClick={ () => handleFavoriteBtn() }
-            src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
-          >
-            <img
-              src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
-              alt="Favorite"
-              className="favorite-icon"
-            />
-          </button>
-
-          <p data-testid="recipe-category">{strCategory}</p>
-
-          <ul>
-            {filterIngredients(recipeDetails).map((ingredient, index) => (
-              <li
-                key={ index }
-                data-testid={ `${index}-ingredient-name-and-measure` }
-              >
-                { ingredient }
-              </li>
-            ))}
-          </ul>
-
-          <p data-testid="instructions">{strInstructions}</p>
-
-          <a
-            data-testid="video"
-            href={ strYoutube }
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src={ YoutubeIcon } alt="Youtube" className="youtube-icon" />
-          </a>
-
-          {arrayIndex.map((item, index) => (
-            <h3 key={ index } data-testid={ `${index}-recomendation-card` }>{item}</h3>
-          ))}
-          {isBtnEnable && (
-            <Link to={ `${urlId}/in-progress` }>
-              <button
-                type="button"
-                data-testid="start-recipe-btn"
-                className="start-btn btn btn-secondary btn-lg"
-              >
-                { isRecipeInProgress ? 'Continue Recipe' : 'Start Recipe' }
-              </button>
-            </Link>
-          )}
-        </div>
+        </Link>
       )}
     </div>
   );
