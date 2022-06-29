@@ -29,3 +29,10 @@
   margin-right: 0.5rem;
   width: 2rem;
 }
+
+.start-btn {
+  bottom: 0;
+  padding: 1rem;
+  position: fixed;
+  width: 355px;
+}

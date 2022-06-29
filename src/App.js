@@ -7,8 +7,10 @@ import {
 import Login from './pages/Login';
 import Foods from './pages/food/Foods';
 import Food from './pages/food/Food';
+import FoodInProgress from './pages/food/FoodInProgress';
 import Drinks from './pages/drink/Drinks';
 import Drink from './pages/drink/Drink';
+import DrinkInProgress from './pages/drink/DrinkInProgress';
 import Explore from './pages/Explore/Explore';
 import ExploreFoods from './pages/Explore/ExploreFoods';
 import ExploreDrinks from './pages/Explore/ExploreDrinks';
@@ -18,8 +20,8 @@ import ExpFoodsNat from './pages/Explore/especific/ExpFoodsNat';
 import Profile from './pages/Profile';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
-import FoodInProgress from './pages/food/FoodInProgress';
-import DrinkInProgress from './pages/drink/DrinkInProgress';
+import NotFound from './component/NotFound';
+
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -30,18 +32,11 @@ function App() {
         <Route exact path="/" component={ Login } />
         <Route exact path="/foods" component={ Foods } />
         <Route exact path="/foods/:id" component={ Food } />
-        <Route
-          exact
-          path="/foods/:id/in-progress"
-          component={ FoodInProgress }
-        />
+        <Route exact path="/foods/:id/in-progress" component={ FoodInProgress } />
         <Route exact path="/drinks" component={ Drinks } />
         <Route exact path="/drinks/:id" component={ Drink } />
-        <Route
-          exact
-          path="/drinks/:id/in-progress"
-          component={ DrinkInProgress }
-        />
+        <Route exact path="/drinks/:id/in-progress" component={ DrinkInProgress } />
+
         <Route exact path="/explore" component={ Explore } />
         <Route exact path="/explore/foods" component={ ExploreFoods } />
         <Route exact path="/explore/drinks" component={ ExploreDrinks } />
@@ -64,6 +59,7 @@ function App() {
         <Route exact path="/profile" component={ Profile } />
         <Route exact path="/done-recipes" component={ DoneRecipes } />
         <Route exact path="/favorite-recipes" component={ FavoriteRecipes } />
+        <Route path="*" exact component={ NotFound } />
       </Switch>
     </BrowserRouter>
   );

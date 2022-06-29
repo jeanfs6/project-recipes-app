@@ -1,19 +1,23 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import YoutubeIcon from '../../images/youtube.svg';
 import shareIcon from '../../images/shareIcon.svg';
 import whiteHeartIcon from '../../images/whiteHeartIcon.svg';
+import blackHeartIcon from '../../images/blackHeartIcon.svg';
 import '../../component/recipeCard.css';
-import './food&drink.css';
-import Gallery from '../../component/Gallery';
-import { MeuContextoInterno } from '../../context';
 import * as localApi from '../../helpers/localApi/index';
+
+const arrayIndex = ['recipe1', 'recipe2', 'recipe3', 'recipe4', 'recipe5', 'recipe6'];
 
 const Food = () => {
   const { id: urlId } = useParams();
 
   const [recipeDetails, setRecipeDetails] = useState({});
-  const [statistics, setStatistics] = useState({});
+  const [isBtnEnable, setIsBtnEnable] = useState(false);
+  const [isRecipeInProgress, setContinueBtn] = useState(true);
+  const [isURLcopied, setCopiedURL] = useState(false);
+  const [isFavorite, setFavorite] = useState(false);
+
 
   const {
     idMeal,
@@ -37,29 +41,38 @@ const Food = () => {
       setRecipeDetails(data.meals[0]);
     };
     getRecipe();
-    const getLocalStorage = () => {
-      const doneRecipes = localApi.getLocalKey('doneRecipes');
-      const favoriteRecipes = localApi.getLocalKey('favoriteRecipes');
-      const inProgressRecipes = localApi.getLocalKey('inProgressRecipes');
-      if ((doneRecipes && favoriteRecipes && inProgressRecipes) === null) {
-        return;
-      }
-      const done = doneRecipes.some(({ id }) => id === urlId);
-      const favorite = favoriteRecipes.some(({ id }) => id === urlId);
-      console.log(favorite);
-      const progress = inProgressRecipes.some(
-        ({ meals: { id } }) => id === urlId,
-      );
-      setStatistics({ done, favorite, progress });
+    const verifyInProgress = () => {
+      const inProgressRecipes = localApi
+        .getLocalKey('inProgressRecipes') || { meals: {} };
+      const isInProgress = urlId in inProgressRecipes.meals;
+      setContinueBtn(isInProgress);
     };
-    getLocalStorage();
+    verifyInProgress();
+    const verifyIsDone = () => {
+      const doneRecipes = localApi.getLocalKey('doneRecipes') || [];
+      const recipeIsDone = doneRecipes.some(({ id }) => id === urlId);
+      setIsBtnEnable(!recipeIsDone);
+    };
+    verifyIsDone();
+    const verifyIsFavorite = () => {
+      const favoriteRecipes = localApi.getLocalKey('favoriteRecipes') || [];
+      const checkIsFavorite = favoriteRecipes.some(({ id }) => id === urlId);
+      setFavorite(checkIsFavorite);
+    };
+    verifyIsFavorite();
   }, [urlId]);
 
-  // const setInProgress = () => {
+  const {
+    strArea,
+    idMeal,
+    strMealThumb,
+    strMeal,
+    strCategory,
+    strInstructions,
+    strYoutube,
+  } = recipeDetails;
 
-  // }
-
-  const filterIgredients = (recipe) => {
+  const filterIngredients = (recipe) => {
     const TWENTY = 20;
     const ingredientList = [];
 
@@ -76,6 +89,24 @@ const Food = () => {
     return ingredientList;
   };
 
+  const linkToClipboard = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    setCopiedURL(true);
+  };
+
+  const handleFavoriteBtn = () => {
+    localApi.setLocalKey('favoriteRecipes',
+      [{ id: idMeal,
+        type: 'food',
+        nationality: strArea,
+        category: strCategory,
+        alcoholicOrNot: '',
+        name: strMeal,
+        image: strMealThumb }]);
+    setFavorite(!isFavorite);
+  };
+
   return (
     <div>
       <h1 data-testid="recipe-title" className="l-food">
@@ -89,20 +120,37 @@ const Food = () => {
         alt={ strMeal }
       />
 
-      <button type="button" data-testid="share-btn">
+      <button
+        type="button"
+        data-testid="share-btn"
+        onClick={ () => linkToClipboard() }
+      >
         <img src={ shareIcon } alt="Share" className="share-icon" />
+        { isURLcopied && <p>Link copied!</p> }
       </button>
 
-      <button type="button" data-testid="favorite-btn">
-        <img src={ whiteHeartIcon } alt="Favorite" className="favorite-icon" />
+      <button
+        type="button"
+        data-testid="favorite-btn"
+        onClick={ () => handleFavoriteBtn() }
+        src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+      >
+        <img
+          src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+          alt="Favorite"
+          className="favorite-icon"
+        />
       </button>
 
       <p data-testid="recipe-category">{strCategory}</p>
 
       <ul>
-        {filterIgredients(recipeDetails).map((ingredient, index) => (
-          <li key={ index } data-testid={ `${index}-ingredient-name-and-measure` }>
-            {ingredient}
+        {filterIngredients(recipeDetails).map((ingredient, index) => (
+          <li
+            key={ index }
+            data-testid={ `${index}-ingredient-name-and-measure` }
+          >
+            { ingredient }
           </li>
         ))}
       </ul>
@@ -118,19 +166,20 @@ const Food = () => {
         <img src={ YoutubeIcon } alt="Youtube" className="youtube-icon" />
       </a>
 
-      <Gallery recipes={ recomendation } type="drinks" />
-      {!statistics.done
-      && (
-        <Link to={ `/foods/${idMeal}/in-progress` }>
+      {arrayIndex.map((item, index) => (
+        <h3 key={ index } data-testid={ `${index}-recomendation-card` }>{item}</h3>
+      ))}
+      {isBtnEnable && (
+        <Link to={ `${urlId}/in-progress` }>
           <button
-            className="start-button"
             type="button"
             data-testid="start-recipe-btn"
+            className="start-btn btn btn-secondary btn-lg"
           >
-            Start Recipe
+            { isRecipeInProgress ? 'Continue Recipe' : 'Start Recipe' }
           </button>
-        </Link>)}
-
+        </Link>
+      )}
     </div>
   );
 };
