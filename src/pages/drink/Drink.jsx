@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import shareIcon from '../../images/shareIcon.svg';
@@ -26,12 +25,6 @@ const Drink = () => {
     strAlcoholic,
     strInstructions,
   } = recipeDetails;
-  const {
-    recipes: { foods },
-  } = useContext(MeuContextoInterno);
-
-  const SIX = 6;
-  const recomendation = foods.slice(0, SIX);
 
   useEffect(() => {
     const getRecipe = async () => {
