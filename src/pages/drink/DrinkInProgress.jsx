@@ -6,7 +6,7 @@ import blackHeartIcon from '../../images/blackHeartIcon.svg';
 import '../../component/recipeCard.css';
 import * as localApi from '../../helpers/localApi/index';
 import {
-  linkToClipboard, filterIgredients, verifyChecked,
+  linkToClipboard, filterIgredients, verifyChecked, setFinished,
 } from '../../helpers/Handlers/index';
 
 const DrinkInProgress = () => {
@@ -102,7 +102,7 @@ const DrinkInProgress = () => {
             <button
               type="button"
               data-testid="share-btn"
-              onClick={ () => setCopiedURL((linkToClipboard())) }
+              onClick={ () => setCopiedURL((linkToClipboard(urlId, 'drink'))) }
             >
               <img src={ shareIcon } alt="Share" className="share-icon" />
               { isURLcopied && <p>Link copied!</p> }
@@ -148,11 +148,15 @@ const DrinkInProgress = () => {
 
             <p data-testid="instructions">{strInstructions}</p>
             {isBtnEnable && (
-              <Link to={ `${urlId}/in-progress` }>
+              <Link to="/done-recipes">
                 <button
                   type="button"
                   data-testid="finish-recipe-btn"
                   className="start-btn btn btn-primary btn-lg"
+                  disabled={
+                    setFinished(checkedIng.length,
+                      filterIgredients(drinkInProgress).length)
+                  }
                 >
                   { isRecipeInProgress ? 'Continue Recipe' : 'Finish Recipe' }
                 </button>
