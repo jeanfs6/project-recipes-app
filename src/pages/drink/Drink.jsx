@@ -8,8 +8,6 @@ import Gallery from '../../component/Gallery';
 import { MeuContextoInterno } from '../../context';
 import * as localApi from '../../helpers/localApi/index';
 
-// Resolv Car
-
 const Drink = () => {
   const { id: urlId } = useParams();
 
@@ -18,6 +16,7 @@ const Drink = () => {
   const [isRecipeInProgress, setContinueBtn] = useState(true);
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     recipes: { drinks },
@@ -40,7 +39,8 @@ const Drink = () => {
       const url = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${urlId}`;
       const response = await fetch(url);
       const data = await response.json();
-      setRecipeDetails(data.drinks[0]);
+      setRecipeDetails(data.drinks[0] || []);
+      if (recipeDetails !== []) setIsLoading(false);
     };
     getRecipe();
     const verifyInProgress = () => {
@@ -62,7 +62,7 @@ const Drink = () => {
       setFavorite(checkIsFavorite);
     };
     verifyIsFavorite();
-  }, [urlId]);
+  }, [urlId, recipeDetails]);
 
   const filterIgredients = (recipe) => {
     const FIFTEEN = 15;
@@ -101,64 +101,72 @@ const Drink = () => {
 
   return (
     <div>
-      <h1 data-testid="recipe-title" className="l-drink">{ strDrink }</h1>
+      {
+        isLoading
+          ? (<h1 className="loading">Loading...</h1>)
+          : (
+            <div>
+              <img
+                className="card-img card-img-mine"
+                data-testid="recipe-photo"
+                src={ strDrinkThumb }
+                alt={ strDrink }
+              />
 
-      <img
-        className="card-img card-img-mine"
-        data-testid="recipe-photo"
-        src={ strDrinkThumb }
-        alt={ strDrink }
-      />
+              <h1 data-testid="recipe-title" className="l-drink">{ strDrink }</h1>
 
-      <button
-        type="button"
-        data-testid="share-btn"
-        onClick={ () => linkToClipboard() }
-      >
-        <img src={ shareIcon } alt="Share" className="share-icon" />
-        { isURLcopied && <p>Link copied!</p> }
-      </button>
+              <button
+                type="button"
+                data-testid="share-btn"
+                onClick={ () => linkToClipboard() }
+              >
+                <img src={ shareIcon } alt="Share" className="share-icon" />
+                { isURLcopied && <p>Link copied!</p> }
+              </button>
 
-      <button
-        type="button"
-        data-testid="favorite-btn"
-        onClick={ () => handleFavoriteBtn() }
-        src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
-      >
-        <img
-          src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
-          alt="Favorite"
-          className="favorite-icon"
-        />
-      </button>
+              <button
+                type="button"
+                data-testid="favorite-btn"
+                onClick={ () => handleFavoriteBtn() }
+                src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+              >
+                <img
+                  src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+                  alt="Favorite"
+                  className="favorite-icon"
+                />
+              </button>
 
-      <p data-testid="recipe-category">{strAlcoholic}</p>
+              <p data-testid="recipe-category">{strAlcoholic}</p>
 
-      <ul>
-        {filterIgredients(recipeDetails).map((ingredient, index) => (
-          <li
-            key={ index }
-            data-testid={ `${index}-ingredient-name-and-measure` }
-          >
-            { ingredient }
-          </li>
-        ))}
-      </ul>
+              <ul>
+                {filterIgredients(recipeDetails).map((ingredient, index) => (
+                  <li
+                    key={ index }
+                    data-testid={ `${index}-ingredient-name-and-measure` }
+                  >
+                    { ingredient }
+                  </li>
+                ))}
+              </ul>
 
-      <p data-testid="instructions">{strInstructions}</p>
+              <p data-testid="instructions">{strInstructions}</p>
 
-      <Gallery recipes={ recomendation } type="drinks" />
-      {isBtnEnable && (
-        <Link to={ `${urlId}/in-progress` }>
-          <button
-            type="button"
-            data-testid="start-recipe-btn"
-            className="start-btn btn btn-primary btn-lg"
-          >
-            { isRecipeInProgress ? 'Continue Recipe' : 'Start Recipe' }
-          </button>
-        </Link>
-      )}
+              <Gallery recipes={ recomendation } type="drinks" />
+              {isBtnEnable && (
+                <Link to={ `${urlId}/in-progress` }>
+                  <button
+                    type="button"
+                    data-testid="start-recipe-btn"
+                    className="start-btn btn btn-primary btn-lg"
+                  >
+                    { isRecipeInProgress ? 'Continue Recipe' : 'Start Recipe' }
+                  </button>
+                </Link>
+              )}
+            </div>
+          )
+      }
     </div>
   );
 };

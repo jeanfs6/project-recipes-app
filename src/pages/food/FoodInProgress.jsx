@@ -91,14 +91,14 @@ const FoodInProgress = () => {
         ? (<h1 className="loading">Loading...</h1>)
         : (
           <div>
-            <h1 data-testid="recipe-title" className="l-food">{ strMeal }</h1>
-
             <img
               className="card-img card-img-mine"
               data-testid="recipe-photo"
               src={ strMealThumb }
               alt={ strMeal }
             />
+
+            <h1 data-testid="recipe-title" className="l-food">{ strMeal }</h1>
 
             <button
               type="button"
