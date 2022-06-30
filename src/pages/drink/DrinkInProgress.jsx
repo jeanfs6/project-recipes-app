@@ -6,7 +6,7 @@ import blackHeartIcon from '../../images/blackHeartIcon.svg';
 import '../../component/recipeCard.css';
 import * as localApi from '../../helpers/localApi/index';
 import {
-  linkToClipboard, filterIgredients, verifyChecked, setFinished,
+  linkToClipboard, filterIngredients, verifyChecked, setFinished,
 } from '../../helpers/Handlers/index';
 
 const DrinkInProgress = () => {
@@ -15,7 +15,6 @@ const DrinkInProgress = () => {
 
   const getIngredient = () => {
     const resultIng = inProgressRecipes?.cocktails || [];
-    console.log(inProgressRecipes);
     const alreadyChecked = resultIng[urlId] || [];
     return alreadyChecked;
   };
@@ -26,7 +25,7 @@ const DrinkInProgress = () => {
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
   const [checkedIng, setCheckedIng] = useState(getIngredient());
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const setIngredient = () => {
     localApi.setLocalKey('inProgressRecipes',
@@ -39,8 +38,8 @@ const DrinkInProgress = () => {
       const url = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${urlId}`;
       const response = await fetch(url);
       const data = await response.json();
-      setDrinkInProgress(data.drinks[0]);
-      setLoading(false);
+      setDrinkInProgress(data?.drinks[0] || []);
+      if (drinkInProgress !== []) setIsLoading(false);
     };
     getRecipe();
     const verifyInProgress = () => {
@@ -62,7 +61,7 @@ const DrinkInProgress = () => {
       setFavorite(checkIsFavorite);
     };
     verifyIsFavorite();
-  }, [urlId]);
+  }, [urlId, drinkInProgress]);
 
   const {
     idDrink,
@@ -87,7 +86,8 @@ const DrinkInProgress = () => {
 
   return (
     <div>
-      {loading ? (<div className="loading">Loading...</div>)
+      {isLoading
+        ? (<h1 className="loading">Loading...</h1>)
         : (
           <div>
             <h1 data-testid="recipe-title" className="l-drink">{ strDrink }</h1>
@@ -124,7 +124,7 @@ const DrinkInProgress = () => {
             <p data-testid="recipe-category">{strAlcoholic}</p>
 
             <ul>
-              {filterIgredients(drinkInProgress).map((ingredient, index) => (
+              {filterIngredients(drinkInProgress).map((ingredient, index) => (
                 <li
                   style={
                     (checkedIng.includes(ingredient)) ? (
@@ -155,7 +155,7 @@ const DrinkInProgress = () => {
                   className="start-btn btn btn-primary btn-lg"
                   disabled={
                     setFinished(checkedIng.length,
-                      filterIgredients(drinkInProgress).length)
+                      filterIngredients(drinkInProgress).length)
                   }
                 >
                   { isRecipeInProgress ? 'Continue Recipe' : 'Finish Recipe' }

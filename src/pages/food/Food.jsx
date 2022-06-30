@@ -16,21 +16,23 @@ const Food = () => {
     recipes: { foods },
   } = useContext(MeuContextoInterno);
 
-  const SIX = 4;
-  const recomendation = foods.slice(0, SIX);
+  const SIX = 5;
+  const recomendation = foods.slice(2, SIX);
 
   const [recipeDetails, setRecipeDetails] = useState({});
   const [isBtnEnable, setIsBtnEnable] = useState(false);
   const [isRecipeInProgress, setContinueBtn] = useState(true);
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getRecipe = async () => {
       const url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${urlId}`;
       const response = await fetch(url);
       const data = await response.json();
-      setRecipeDetails(data.meals[0]);
+      setRecipeDetails(data.meals[0] || []);
+      if (recipeDetails !== []) setIsLoading(false);
     };
     getRecipe();
     const verifyInProgress = () => {
@@ -52,7 +54,7 @@ const Food = () => {
       setFavorite(checkIsFavorite);
     };
     verifyIsFavorite();
-  }, [urlId]);
+  }, [urlId, recipeDetails]);
 
   const {
     strArea,
@@ -101,73 +103,81 @@ const Food = () => {
 
   return (
     <div>
-      <h1 data-testid="recipe-title" className="l-food">{ strMeal }</h1>
+      {
+        isLoading
+          ? (<h1 className="loading">Loading...</h1>)
+          : (
+            <div>
+              <img
+                className="card-img card-img-mine"
+                data-testid="recipe-photo"
+                src={ strMealThumb }
+                alt={ strMeal }
+              />
 
-      <img
-        className="card-img card-img-mine"
-        data-testid="recipe-photo"
-        src={ strMealThumb }
-        alt={ strMeal }
-      />
+              <h1 data-testid="recipe-title" className="l-food">{ strMeal }</h1>
 
-      <button
-        type="button"
-        data-testid="share-btn"
-        onClick={ () => linkToClipboard() }
-      >
-        <img src={ shareIcon } alt="Share" className="share-icon" />
-        { isURLcopied && <p>Link copied!</p> }
-      </button>
+              <button
+                type="button"
+                data-testid="share-btn"
+                onClick={ () => linkToClipboard() }
+              >
+                <img src={ shareIcon } alt="Share" className="share-icon" />
+                { isURLcopied && <p>Link copied!</p> }
+              </button>
 
-      <button
-        type="button"
-        data-testid="favorite-btn"
-        onClick={ () => handleFavoriteBtn() }
-        src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
-      >
-        <img
-          src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
-          alt="Favorite"
-          className="favorite-icon"
-        />
-      </button>
+              <button
+                type="button"
+                data-testid="favorite-btn"
+                onClick={ () => handleFavoriteBtn() }
+                src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+              >
+                <img
+                  src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+                  alt="Favorite"
+                  className="favorite-icon"
+                />
+              </button>
 
-      <p data-testid="recipe-category">{strCategory}</p>
+              <p data-testid="recipe-category">{strCategory}</p>
 
-      <ul>
-        {filterIngredients(recipeDetails).map((ingredient, index) => (
-          <li
-            key={ index }
-            data-testid={ `${index}-ingredient-name-and-measure` }
-          >
-            { ingredient }
-          </li>
-        ))}
-      </ul>
+              <ul>
+                {filterIngredients(recipeDetails).map((ingredient, index) => (
+                  <li
+                    key={ index }
+                    data-testid={ `${index}-ingredient-name-and-measure` }
+                  >
+                    { ingredient }
+                  </li>
+                ))}
+              </ul>
 
-      <p data-testid="instructions">{strInstructions}</p>
+              <p data-testid="instructions">{strInstructions}</p>
 
-      <a
-        data-testid="video"
-        href={ strYoutube }
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <img src={ YoutubeIcon } alt="Youtube" className="youtube-icon" />
-      </a>
+              <a
+                data-testid="video"
+                href={ strYoutube }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src={ YoutubeIcon } alt="Youtube" className="youtube-icon" />
+              </a>
 
-      <Gallery recipes={ recomendation } type="Meal" />
-      {isBtnEnable && (
-        <Link to={ `${urlId}/in-progress` }>
-          <button
-            type="button"
-            data-testid="start-recipe-btn"
-            className="start-btn btn btn-secondary btn-lg"
-          >
-            { isRecipeInProgress ? 'Continue Recipe' : 'Start Recipe' }
-          </button>
-        </Link>
-      )}
+              <Gallery recipes={ recomendation } type="Meal" />
+              {isBtnEnable && (
+                <Link to={ `${urlId}/in-progress` }>
+                  <button
+                    type="button"
+                    data-testid="start-recipe-btn"
+                    className="start-btn btn btn-secondary btn-lg"
+                  >
+                    { isRecipeInProgress ? 'Continue Recipe' : 'Start Recipe' }
+                  </button>
+                </Link>
+              )}
+            </div>
+          )
+      }
     </div>
   );
 };
