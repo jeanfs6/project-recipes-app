@@ -8,6 +8,8 @@ import Gallery from '../../component/Gallery';
 import { MeuContextoInterno } from '../../context';
 import * as localApi from '../../helpers/localApi/index';
 
+// Resolv Car
+
 const Drink = () => {
   const { id: urlId } = useParams();
 
