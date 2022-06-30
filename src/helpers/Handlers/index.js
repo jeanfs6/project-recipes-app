@@ -1,6 +1,20 @@
-export const linkToClipboard = () => {
-  const url = window.location.href;
+export const linkToClipboard = (id, type) => {
+  let url = '';
+
+  if (type === 'food') {
+    url = `http://localhost:3000/foods/${id}`;
+  } else {
+    url = `http://localhost:3000/drinks/${id}`;
+  }
+
   navigator.clipboard.writeText(url);
+  return true;
+};
+
+export const setFinished = (checkedIng, totalIng) => {
+  if (checkedIng === totalIng) {
+    return false;
+  }
   return true;
 };
 
