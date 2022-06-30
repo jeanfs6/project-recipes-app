@@ -18,7 +18,7 @@ export const setFinished = (checkedIng, totalIng) => {
   return true;
 };
 
-export const filterIgredients = (recipe) => {
+export const filterIngredients = (recipe) => {
   const Eight = 8;
   const ingredientList = [];
 

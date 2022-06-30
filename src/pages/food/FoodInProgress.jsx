@@ -6,7 +6,7 @@ import blackHeartIcon from '../../images/blackHeartIcon.svg';
 import '../../component/recipeCard.css';
 import * as localApi from '../../helpers/localApi/index';
 import {
-  linkToClipboard, filterIgredients, verifyChecked, setFinished,
+  linkToClipboard, filterIngredients, verifyChecked, setFinished,
 } from '../../helpers/Handlers/index';
 
 const FoodInProgress = () => {
@@ -25,7 +25,7 @@ const FoodInProgress = () => {
   const [isURLcopied, setCopiedURL] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
   const [checkedIng, setCheckedIng] = useState(getIngredient());
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const setIngredient = () => {
     localApi.setLocalKey('inProgressRecipes',
@@ -39,7 +39,7 @@ const FoodInProgress = () => {
       const response = await fetch(url);
       const data = await response.json();
       setFoodInProgress(data?.meals[0] || []);
-      setLoading(false);
+      if (foodInProgress !== []) setIsLoading(false);
     };
     getRecipe();
 
@@ -62,7 +62,7 @@ const FoodInProgress = () => {
       setFavorite(checkIsFavorite);
     };
     verifyIsFavorite();
-  }, [urlId, checkedIng, setCheckedIng]);
+  }, [urlId, checkedIng, setCheckedIng, foodInProgress]);
 
   const {
     idMeal,
@@ -87,84 +87,84 @@ const FoodInProgress = () => {
 
   return (
     <div>
-      {loading ? (<div>Loading...</div>) : (
-        <div>
-          <h1 data-testid="recipe-title" className="l-food">{ strMeal }</h1>
+      {isLoading
+        ? (<h1 className="loading">Loading...</h1>)
+        : (
+          <div>
+            <h1 data-testid="recipe-title" className="l-food">{ strMeal }</h1>
 
-          <img
-            className="card-img card-img-mine"
-            data-testid="recipe-photo"
-            src={ strMealThumb }
-            alt={ strMeal }
-          />
-        </div>
-      )}
-      {isBtnEnable && (
-        <div>
-          <button
-            type="button"
-            data-testid="share-btn"
-            onClick={ () => setCopiedURL((linkToClipboard(urlId, 'food'))) }
-          >
-            <img src={ shareIcon } alt="Share" className="share-icon" />
-            { isURLcopied && <p>Link copied!</p> }
-          </button>
-
-          <button
-            type="button"
-            data-testid="favorite-btn"
-            onClick={ () => handleFavoriteBtn() }
-            src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
-          >
             <img
-              src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
-              alt="Favorite"
-              className="favorite-icon"
+              className="card-img card-img-mine"
+              data-testid="recipe-photo"
+              src={ strMealThumb }
+              alt={ strMeal }
             />
-          </button>
 
-          <p data-testid="recipe-category">{strCategory}</p>
+            <button
+              type="button"
+              data-testid="share-btn"
+              onClick={ () => setCopiedURL((linkToClipboard(urlId, 'food'))) }
+            >
+              <img src={ shareIcon } alt="Share" className="share-icon" />
+              { isURLcopied && <p>Link copied!</p> }
+            </button>
 
-          <ul>
-            {filterIgredients(foodInProgress).map((ingredient, index) => (
-              <li
-                style={
-                  (checkedIng.includes(ingredient)) ? ({ textDecoration: 'line-through' })
-                    : null
-                }
-                data-testid={ `${index}-ingredient-step` }
-                key={ index }
-              >
-                <input
-                  type="checkbox"
-                  name={ ingredient }
-                  id={ ingredient }
-                  checked={ checkedIng.includes(ingredient) }
-                  onChange={ (e) => setCheckedIng(verifyChecked(e, checkedIng)) }
-                />
-                { ingredient }
-              </li>
-            ))}
-          </ul>
+            <button
+              type="button"
+              data-testid="favorite-btn"
+              onClick={ () => handleFavoriteBtn() }
+              src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+            >
+              <img
+                src={ isFavorite ? blackHeartIcon : whiteHeartIcon }
+                alt="Favorite"
+                className="favorite-icon"
+              />
+            </button>
 
-          <p data-testid="instructions">{strInstructions}</p>
+            <h3 data-testid="recipe-category">{strCategory}</h3>
 
-          {isBtnEnable && (
-            <Link to="/done-recipes">
-              <button
-                type="button"
-                data-testid="finish-recipe-btn"
-                className="start-btn btn btn-secondary btn-lg"
-                disabled={
-                  setFinished(checkedIng.length, filterIgredients(foodInProgress).length)
-                }
-              >
-                { isRecipeInProgress ? 'Continue Recipe' : 'Finish Recipe' }
-              </button>
-            </Link>
-          )}
-        </div>
-      )}
+            <ul>
+              {filterIngredients(foodInProgress).map((ingredient, index) => (
+                <li
+                  style={
+                    (checkedIng.includes(ingredient))
+                      ? ({ textDecoration: 'line-through' }) : null
+                  }
+                  data-testid={ `${index}-ingredient-step` }
+                  key={ index }
+                >
+                  <input
+                    type="checkbox"
+                    name={ ingredient }
+                    id={ ingredient }
+                    checked={ checkedIng.includes(ingredient) }
+                    onChange={ (e) => setCheckedIng(verifyChecked(e, checkedIng)) }
+                  />
+                  { ingredient }
+                </li>
+              ))}
+            </ul>
+
+            <p data-testid="instructions">{strInstructions}</p>
+
+            {isBtnEnable && (
+              <Link to="/done-recipes">
+                <button
+                  type="button"
+                  data-testid="finish-recipe-btn"
+                  className="start-btn btn btn-secondary btn-lg"
+                  disabled={
+                    setFinished(checkedIng.length,
+                      filterIngredients(foodInProgress).length)
+                  }
+                >
+                  { isRecipeInProgress ? 'Continue Recipe' : 'Finish Recipe' }
+                </button>
+              </Link>
+            )}
+          </div>
+        )}
     </div>
   );
 };
