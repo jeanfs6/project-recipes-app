@@ -97,9 +97,10 @@ const FoodInProgress = () => {
             src={ strMealThumb }
             alt={ strMeal }
           />
-
+        </div>
+      )}
       {isBtnEnable && (
-        <Link to="/in-progress">
+        <div>
           <button
             type="button"
             data-testid="share-btn"

@@ -1,39 +1,49 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import propTypes from 'prop-types';
 import shareIcon from '../images/shareIcon.svg';
 
-const SavedRecipes = ({ index, favorite }) => {
+const SavedRecipes = ({ index, recipe }) => {
   const [isURLcopied, setCopiedURL] = useState(false);
+
   const getCategory = () => {
-    if (favorite.type === 'food') {
-      return `${favorite.nationality} - ${favorite.category}`;
+    if (recipe.type === 'food') {
+      return `${recipe.nationality} - ${recipe.category}`;
     }
-    return favorite.alcoholicOrNot;
+    return recipe.alcoholicOrNot;
   };
+
   const renderTags = () => (
     <ul>
-      {favorite.tags.map((tag, i) => (
-        <li key={ i } data-testid={ `0-${tag}-horizontal-tag` }>{tag}</li>
-      )) }
-
+      {
+        recipe.tags.map((tag, i) => (
+          <li key={ i } data-testid={ `0-${tag}-horizontal-tag` }>{tag}</li>
+        ))
+      }
     </ul>);
+
   const linkToClipboard = () => {
-    const url = `http://localhost:3000/foods/${favorite.id}`;
+    const url = `http://localhost:3000/foods/${recipe.id}`;
     navigator.clipboard.writeText(url);
     setCopiedURL(true);
   };
+
   return (
     <div>
-      <img
-        alt={ favorite.name }
-        src={ favorite.image }
-        data-testid={ `${index}-horizontal-image` }
-      />
+      <Link to={ `${recipe.type}s/${recipe.id}` }>
+        <img
+          alt={ recipe.name }
+          src={ recipe.image }
+          data-testid={ `${index}-horizontal-image` }
+        />
+      </Link>
       <p data-testid={ `${index}-horizontal-top-text` }>
         { getCategory() }
       </p>
-      <p data-testid={ `${index}-horizontal-name` }>{ favorite.name }</p>
-      <p data-testid={ `${index}-horizontal-done-date` }>{favorite.doneDate }</p>
+      <Link to={ `${recipe.type}s/${recipe.id}` }>
+        <p data-testid={ `${index}-horizontal-name` }>{ recipe.name }</p>
+      </Link>
+      <p data-testid={ `${index}-horizontal-done-date` }>{recipe.doneDate }</p>
       <button
         type="button"
         onClick={ () => linkToClipboard() }
@@ -46,13 +56,13 @@ const SavedRecipes = ({ index, favorite }) => {
         />
         { isURLcopied && <p>Link copied!</p> }
       </button>
-      { favorite.type === 'food' ? renderTags() : null }
+      { recipe.type === 'food' ? renderTags() : null }
 
     </div>
   );
 };
 SavedRecipes.propTypes = {
-  favorite: propTypes.instanceOf(Object),
+  recipe: propTypes.instanceOf(Object),
   index: propTypes.number,
 }.isRequired;
 
