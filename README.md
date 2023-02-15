@@ -6,7 +6,6 @@ Nele será possível ver, buscar, filtrar, favoritar e acompanhar o progresso de
 
 A base de dados foram duas APIs distintas, uma para comidas e outra para bebidas.
 
-Veja o exemplo a seguir do layout do projeto!
 
 ### Tecnologias:
 
