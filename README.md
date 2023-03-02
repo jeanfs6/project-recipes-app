@@ -65,7 +65,7 @@ Os end-points também são bastante ricos, você pode [vê-los aqui](https://www
   ```
 6 - Finalmente, para rodar o projeto,  utiliize o comando ***npm start***. Ex:
 ```javascript
-  npm install
+  npm start
   ```
 
 
